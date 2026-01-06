@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reddit Clone</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Reddit Clone</a>
+      <ul class="right">
+        <li>
+          <form id="loginForm" class="row">
+            <div class="input-field col">
+              <input id="loginEmail" type="email" placeholder="Email" class="navbar-input" required>
+            </div>
+            <div class="input-field col">
+              <input id="loginPassword" type="password" placeholder="Password" class="navbar-input" required>
+            </div>
+            <div class="col">
+              <button class="btn waves-effect waves-light" type="submit">Login</button>
+            </div>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <div id="topicForm"></div>
+    <div id="topics"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
