@@ -1,3 +1,4 @@
+// LOGIN
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -17,6 +18,8 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     }
 
     const data = await res.json();
+
+    // Tallenna token ja isAdmin localstorageen
     localStorage.setItem('token', data.token);
     localStorage.setItem('isAdmin', data.user.isAdmin);
 
@@ -27,6 +30,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   }
 });
 
+// REGISTER
 document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -47,6 +51,12 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
       throw new Error(err.message || 'Registration failed');
     }
 
+    const data = await res.json();
+
+    // Tallenna token ja isAdmin localstorageen
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('isAdmin', data.user.isAdmin);
+
     alert('User registered successfully!');
     window.location.href = '/index.html';
   } catch (err) {
@@ -56,6 +66,7 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
 
 const token = localStorage.getItem('token');
 
+// CREATE TOPIC (vain jos kirjautunut)
 if (token) {
   const topicFormDiv = document.getElementById('topicForm');
 
@@ -85,6 +96,7 @@ if (token) {
         throw new Error(err.message || 'Failed to post topic');
       }
 
+      const data = await res.json();
       alert('Topic posted!');
       loadTopics();
     } catch (err) {
@@ -92,6 +104,8 @@ if (token) {
     }
   });
 }
+
+// LOAD TOPICS + DELETE (ADMIN)
 async function loadTopics() {
   try {
     const res = await fetch('/api/topics');
@@ -113,6 +127,7 @@ async function loadTopics() {
       </div>
     `).join('');
 
+    // DELETE napin toiminnallisuus
     if (isAdmin) {
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
@@ -146,3 +161,4 @@ async function loadTopics() {
 }
 
 loadTopics();
+
