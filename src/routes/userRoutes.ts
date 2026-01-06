@@ -7,7 +7,6 @@ import { validationResult } from 'express-validator';
 
 const router = Router();
 
-// REGISTER
 router.post('/register', registerValidation, async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ message: errors.array()[0].msg });
@@ -24,7 +23,6 @@ router.post('/register', registerValidation, async (req: Request, res: Response)
   res.status(200).json(newUser);
 });
 
-// LOGIN
 router.post('/login', loginValidation, async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ message: errors.array()[0].msg });

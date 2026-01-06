@@ -11,7 +11,6 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-
     if (!res.ok) throw await res.json();
     const data = await res.json();
 
@@ -19,21 +18,21 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     localStorage.setItem('isAdmin', data.user.isAdmin);
 
     alert('Logged in successfully!');
-    window.location.reload();
+    window.location.href = '/'; // Redirect root, ei index.html
   } catch (err) {
     alert(err.message || 'Login failed');
   }
 });
 
-// POST TOPIC
 const token = localStorage.getItem('token');
+
 if (token) {
   const topicFormDiv = document.getElementById('topicForm');
   topicFormDiv.innerHTML = `
     <h4>Create Topic</h4>
     <input id="topicTitle" placeholder="Title">
     <textarea id="topicText" class="materialize-textarea" placeholder="Content"></textarea>
-    <button id="postTopic" class="btn waves-effect waves-light" type="button">Post</button>
+    <button id="postTopic" class="btn waves-effect waves-light" type="submit">Post</button>
   `;
 
   document.getElementById('postTopic').addEventListener('click', async () => {
@@ -58,7 +57,6 @@ if (token) {
   });
 }
 
-// LOAD TOPICS
 async function loadTopics() {
   try {
     const res = await fetch('/api/topics');
@@ -74,7 +72,7 @@ async function loadTopics() {
           <p class="grey-text text-darken-2">${t.username} - ${new Date(t.createdAt).toLocaleString()}</p>
         </div>
         <div class="card-action">
-          ${isAdmin ? `<button class="btn waves-effect waves-light delete-btn">Delete</button>` : ''}
+          ${isAdmin ? `<button id="deleteTopic" class="btn waves-effect waves-light delete-btn">Delete</button>` : ''}
         </div>
       </div>
     `).join('');
