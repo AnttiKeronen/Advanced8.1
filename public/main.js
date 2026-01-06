@@ -1,9 +1,8 @@
 // LOGIN
-document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+document.getElementById('loginForm')?.addEventListener('submit', async e => {
   e.preventDefault();
-
-  const email = document.getElementById('loginEmail')?.value.trim();
-  const password = document.getElementById('loginPassword')?.value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
 
   try {
     const res = await fetch('/api/user/login', {
@@ -12,64 +11,24 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
       body: JSON.stringify({ email, password })
     });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || 'Login failed');
-    }
-
+    if (!res.ok) throw await res.json();
     const data = await res.json();
 
-    // Tallenna token ja isAdmin localstorageen
     localStorage.setItem('token', data.token);
     localStorage.setItem('isAdmin', data.user.isAdmin);
 
     alert('Logged in successfully!');
     window.location.reload();
   } catch (err) {
-    alert('Error occurred: ' + err.message);
+    alert(err.message || 'Login failed');
   }
 });
 
-// REGISTER
-document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById('email')?.value.trim();
-  const username = document.getElementById('username')?.value.trim();
-  const password = document.getElementById('password')?.value.trim();
-  const isAdmin = document.getElementById('isAdmin')?.checked || false;
-
-  try {
-    const res = await fetch('/api/user/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, username, password, isAdmin })
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || 'Registration failed');
-    }
-
-    const data = await res.json();
-
-    // Tallenna token ja isAdmin localstorageen
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('isAdmin', data.user.isAdmin);
-
-    alert('User registered successfully!');
-    window.location.href = '/index.html';
-  } catch (err) {
-    alert('Error occurred: ' + err.message);
-  }
-});
-
+// POST topic & display
 const token = localStorage.getItem('token');
 
-// CREATE TOPIC (vain jos kirjautunut)
 if (token) {
   const topicFormDiv = document.getElementById('topicForm');
-
   topicFormDiv.innerHTML = `
     <h4>Create Topic</h4>
     <input id="topicTitle" placeholder="Title">
@@ -90,75 +49,53 @@ if (token) {
         },
         body: JSON.stringify({ title, content })
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || 'Failed to post topic');
-      }
-
-      const data = await res.json();
+      if (!res.ok) throw await res.json();
       alert('Topic posted!');
       loadTopics();
     } catch (err) {
-      alert('Error occurred: ' + err.message);
+      alert(err.message || 'Error posting topic');
     }
   });
 }
 
-// LOAD TOPICS + DELETE (ADMIN)
+// LOAD topics
 async function loadTopics() {
-  try {
-    const res = await fetch('/api/topics');
-    const topics = await res.json();
+  const res = await fetch('/api/topics');
+  const topics = await res.json();
+  const topicsDiv = document.getElementById('topics');
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-    const topicsDiv = document.getElementById('topics');
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-    topicsDiv.innerHTML = topics.map(t => `
-      <div class="card z-depth-2 hoverable grey lighten-2" data-id="${t._id}">
-        <div class="card-content">
-          <span class="card-title">${t.title}</span>
-          <p>${t.content}</p>
-          <p class="grey-text text-darken-2">
-            ${t.username} - ${new Date(t.createdAt).toLocaleString()}
-          </p>
-          ${isAdmin ? `<button class="btn red delete-btn">Delete</button>` : ``}
-        </div>
+  topicsDiv.innerHTML = topics.map(t => `
+    <div class="card z-depth-2 hoverable grey lighten-2" data-id="${t._id}">
+      <div class="card-content">
+        <span class="card-title">${t.title}</span>
+        <p>${t.content}</p>
+        <p class="grey-text text-darken-2">${t.username} - ${new Date(t.createdAt).toLocaleString()}</p>
       </div>
-    `).join('');
+      <div class="card-action">
+        ${isAdmin ? `<button class="btn waves-effect waves-light delete-btn">Delete</button>` : ''}
+      </div>
+    </div>
+  `).join('');
 
-    // DELETE napin toiminnallisuus
-    if (isAdmin) {
-      document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          const id = e.target.closest('.card').dataset.id;
-
-          try {
-            const res = await fetch(`/api/topic/${id}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
-
-            if (!res.ok) {
-              const err = await res.json();
-              throw new Error(err.message || 'Delete failed');
-            }
-
-            alert('Topic deleted successfully.');
-            loadTopics();
-          } catch (err) {
-            alert('Error occurred: ' + err.message);
-          }
-        });
+  if (isAdmin) {
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const id = e.target.closest('.card').dataset.id;
+        try {
+          const res = await fetch(`/api/topic/${id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (!res.ok) throw await res.json();
+          alert('Topic deleted!');
+          loadTopics();
+        } catch (err) {
+          alert(err.message || 'Error deleting topic');
+        }
       });
-    }
-
-  } catch (err) {
-    alert('Error loading topics');
+    });
   }
 }
 
 loadTopics();
-

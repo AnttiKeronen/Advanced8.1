@@ -4,60 +4,27 @@ import { authenticateUser, authenticateAdmin } from '../middleware/validateToken
 
 const router = Router();
 
-// GET ALL TOPICS
-router.get('/topics', async (_req: Request, res: Response) => {
-  try {
-    const topics = await Topic.find().sort({ createdAt: -1 });
-    res.json(topics);
-  } catch (err) {
-    res.status(500).json({ message: 'Error loading topics' });
-  }
+// GET all topics
+router.get('/topics', async (req: Request, res: Response) => {
+  const topics = await Topic.find();
+  res.status(200).json(topics);
 });
 
-// CREATE TOPIC (USER)
+// POST new topic
 router.post('/topic', authenticateUser, async (req: Request, res: Response) => {
-  try {
-    const { title, content } = req.body;
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ message: 'Missing fields' });
 
-    if (!title || !content) {
-      return res.status(400).json({ message: 'Missing fields' });
-    }
-
-    const newTopic = new Topic({
-      title,
-      content,
-      username: req.user!.username,
-      createdAt: new Date()
-    });
-
-    await newTopic.save();
-    res.status(201).json(newTopic);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
+  const newTopic = new Topic({ title, content, username: req.user!.username });
+  await newTopic.save();
+  res.status(200).json(newTopic);
 });
 
-// DELETE TOPIC (ADMIN)
-router.delete(
-  '/topic/:id',
-  authenticateUser,
-  authenticateAdmin,
-  async (req: Request, res: Response) => {
-    try {
-      const topic = await Topic.findById(req.params.id);
-
-      if (!topic) {
-        return res.status(404).json({ message: 'Topic not found' });
-      }
-
-      await topic.deleteOne();
-      res.json({ message: 'Topic deleted successfully' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server error' });
-    }
-  }
-);
+// DELETE topic (admin only)
+router.delete('/topic/:id', authenticateAdmin, async (req: Request, res: Response) => {
+  const topic = await Topic.findByIdAndDelete(req.params.id);
+  if (!topic) return res.status(404).json({ message: 'Topic not found' });
+  res.status(200).json({ message: 'Topic deleted successfully.' });
+});
 
 export default router;
