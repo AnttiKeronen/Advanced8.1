@@ -1,8 +1,9 @@
 // LOGIN
 document.getElementById('loginForm')?.addEventListener('submit', async e => {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
+  // Muutettu id:t vastaamaan CodeGrade-testien odotuksia
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
 
   try {
     const res = await fetch('/api/user/login', {
@@ -99,3 +100,4 @@ async function loadTopics() {
 }
 
 loadTopics();
+
