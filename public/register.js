@@ -10,7 +10,6 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, username, password, isAdmin })
     });
-
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.message || 'Registration failed');

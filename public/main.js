@@ -1,10 +1,7 @@
-// LOGIN
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
-
   try {
     const res = await fetch('/api/user/login', {
       method: 'POST',
@@ -13,19 +10,15 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     });
     if (!res.ok) throw await res.json();
     const data = await res.json();
-
     localStorage.setItem('token', data.token);
     localStorage.setItem('isAdmin', data.user.isAdmin);
-
     alert('Logged in successfully!');
-    window.location.href = '/'; // Redirect root, ei index.html
+    window.location.href = '/';
   } catch (err) {
     alert(err.message || 'Login failed');
   }
 });
-
 const token = localStorage.getItem('token');
-
 if (token) {
   const topicFormDiv = document.getElementById('topicForm');
   topicFormDiv.innerHTML = `
@@ -38,7 +31,6 @@ if (token) {
   document.getElementById('postTopic').addEventListener('click', async () => {
     const title = document.getElementById('topicTitle').value.trim();
     const content = document.getElementById('topicText').value.trim();
-
     try {
       const res = await fetch('/api/topic', {
         method: 'POST',
