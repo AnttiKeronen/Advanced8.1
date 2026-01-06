@@ -3,51 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - Reddit Clone</title>
+  <title>Register</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 </head>
 <body>
-
   <div class="container">
     <h3>Register</h3>
-    <form id="registerForm" class="col s12">
-      <div class="row">
-        <div class="input-field col s12">
-          <input id="email" type="email" required>
-          <label for="email">Email</label>
-        </div>
+    <form id="registerForm">
+      <div class="input-field">
+        <input id="email" type="email" required>
+        <label for="email">Email</label>
       </div>
-
-      <div class="row">
-        <div class="input-field col s12">
-          <input id="username" type="text" required>
-          <label for="username">Username</label>
-        </div>
+      <div class="input-field">
+        <input id="username" type="text" required>
+        <label for="username">Username</label>
       </div>
-
-      <div class="row">
-        <div class="input-field col s12">
-          <input id="password" type="password" required>
-          <label for="password">Password</label>
-        </div>
+      <div class="input-field">
+        <input id="password" type="password" required>
+        <label for="password">Password</label>
       </div>
-
       <p>
         <label>
-          <input type="checkbox" id="isAdmin"/>
+          <input type="checkbox" id="isAdmin">
           <span>Admin</span>
         </label>
       </p>
-
-      <div class="row">
-        <div class="col s12">
-          <button type="submit" class="btn waves-effect waves-light">Register</button>
-        </div>
-      </div>
+      <button type="submit" class="btn waves-effect waves-light">Register</button>
     </form>
   </div>
 
-  <script src="register.js" type="module"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="register.js"></script>
 </body>
 </html>

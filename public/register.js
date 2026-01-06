@@ -1,5 +1,6 @@
-document.getElementById('registerForm').addEventListener('submit', async e => {
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const email = document.getElementById('email').value.trim();
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
@@ -12,10 +13,14 @@ document.getElementById('registerForm').addEventListener('submit', async e => {
       body: JSON.stringify({ email, username, password, isAdmin })
     });
 
-    if (!res.ok) throw await res.json();
-    alert('Registered successfully!');
-    window.location.href = '/index.html';
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Registration failed');
+    }
+
+    alert('User registered successfully!');
+    window.location.href = 'index.html';
   } catch (err) {
-    alert(err.message || 'Error registering');
+    alert(err.message || 'Error occurred');
   }
 });
